@@ -24,6 +24,8 @@ INSTANCE_NAME = get_env_variable("INSTANCE_NAME")
 CONNECTION=get_env_variable("CONNECTION")
 DEBUG = get_env_variable("DEBUG")
 
+# GOOGLE_APPLICATION_CREDENTIALS = get_env_variable("GOOGLE_APPLICATION_CREDENTIALS")
+
 def is_localhost_env():
     return DEBUG if DEBUG else False
 
@@ -125,6 +127,27 @@ def database_migration(migration_command):
     return json.dumps(
         {"message": "{} done on migrations.".format(migration_command)}
     )
+
+# Imports the Google Cloud client library
+# from google.cloud import storage
+
+# Instantiates a client
+# storage_client = storage.Client()
+
+# storage_client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
+
+# # The name for the new bucket
+# bucket_name = "my-new-bucket"
+
+# # Creates the new bucket
+# bucket = storage_client.create_bucket(bucket_name)
+
+# print(f"Bucket {bucket.name} created.")
+
+
+# buckets = list(storage_client.list_buckets())
+
+# print(buckets)
 
 
 if __name__ == "__main__":
