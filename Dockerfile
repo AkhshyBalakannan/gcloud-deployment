@@ -14,7 +14,7 @@ COPY . ./
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 RUN pip install psycopg2
-RUN apt-get -y install postgresql
+# RUN apt-get -y install postgresql
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
