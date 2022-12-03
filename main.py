@@ -10,7 +10,7 @@ def hello_world():
     return "Hello Akhshy!! Its working"
 
 @app.route("/test")
-def hello_world():
+def test_push():
     return "Hello Akhshy!! Its working even after updating in github"
 
 
