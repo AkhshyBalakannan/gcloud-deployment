@@ -27,7 +27,7 @@ DEBUG = get_env_variable("DEBUG")
 # GOOGLE_APPLICATION_CREDENTIALS = get_env_variable("GOOGLE_APPLICATION_CREDENTIALS")
 
 def is_localhost_env():
-    return DEBUG if DEBUG else False
+    return True if DEBUG=='True' else False
 
 app = Flask(__name__)
 
