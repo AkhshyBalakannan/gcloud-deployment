@@ -67,8 +67,11 @@ def delete_note(note_id):
     db.session.query(Note).filter_by(id=note_id).delete()
     db.session.commit()
 
+@app.route("/", methods=['GET'])
+def home():
+    return 'Yes Its Working, But Goto /todos to check DB connection', 200
 
-@app.route("/", methods=["POST", "GET"])
+@app.route("/todos", methods=["POST", "GET"])
 def view_index():
     if request.method == "POST":
         create_note(request.form['text'])
@@ -107,10 +110,10 @@ def database_migration(migration_command):
             ),
             400,
         )
-    if is_localhost_env():
-        migrations_directory = os.path.join("spc-app", "migrations")
-    else:
-        migrations_directory = os.path.join("migrations")
+    # if is_localhost_env():
+    #     migrations_directory = os.path.join("spc-app", "migrations")
+    # else:
+    migrations_directory = os.path.join("migrations")
     migrate = Migrate(app, db, directory=migrations_directory)
     if migration_command == "upgrade":
         upgrade(directory=migrate.directory)
