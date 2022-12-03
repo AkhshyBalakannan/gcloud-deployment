@@ -6,6 +6,7 @@ import os
 import uuid
 import json
 
+
 def get_env_variable(name):
     try:
         return os.environ[name]
@@ -21,17 +22,23 @@ POSTGRES_DB = get_env_variable("POSTGRES_DB")
 PROJECT_ID = get_env_variable("PROJECT_ID")
 INSTANCE_NAME = get_env_variable("INSTANCE_NAME")
 CONNECTION=get_env_variable("CONNECTION")
+DEBUG = get_env_variable("DEBUG")
+
+def is_localhost_env():
+    return DEBUG if DEBUG else False
 
 app = Flask(__name__)
 
-DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}:5432/{db}?host=/cloudsql/{connect}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=DB_HOST,db=POSTGRES_DB,connect=CONNECTION)
+if is_localhost_env():
+    DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}:5432/{db}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=DB_HOST,db=POSTGRES_DB)
+else:
+    DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}:5432/{db}?host=/cloudsql/{connect}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=DB_HOST,db=POSTGRES_DB,connect=CONNECTION)
+
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # silence the deprecation warning
 
-# project_dir = os.path.dirname(os.path.abspath(__file__))
-# database_file = "sqlite:///{}".format(os.path.join(project_dir, "todo.db"))
-# app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
@@ -67,11 +74,7 @@ def delete_note(note_id):
     db.session.query(Note).filter_by(id=note_id).delete()
     db.session.commit()
 
-@app.route("/", methods=['GET'])
-def home():
-    return 'Yes Its Working, But Goto /todos to check DB connection', 200
-
-@app.route("/todos", methods=["POST", "GET"])
+@app.route("/", methods=["POST", "GET"])
 def view_index():
     if request.method == "POST":
         create_note(request.form['text'])
@@ -86,8 +89,6 @@ def edit_note(note_id):
         delete_note(note_id)
     return redirect("/", code=302)
 
-def is_localhost_env():
-    return False
 
 
 @app.route("/admin/db/<migration_command>", methods=['GET'])
