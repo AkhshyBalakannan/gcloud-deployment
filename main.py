@@ -24,7 +24,7 @@ INSTANCE_NAME = get_env_variable("INSTANCE_NAME")
 
 app = Flask(__name__)
 
-DB_URL = 'postgresql://{user}:{pw}@{url}/{db}?host=/cloudsql/{PROJECT_ID}:{INSTANCE_NAME}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=DB_HOST,db=POSTGRES_DB,PROJECT_ID=PROJECT_ID,INSTANCE_NAME=INSTANCE_NAME)
+DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}:5432/{db}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=DB_HOST,db=POSTGRES_DB)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # silence the deprecation warning
