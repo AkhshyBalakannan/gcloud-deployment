@@ -92,6 +92,49 @@ def edit_note(note_id):
         delete_note(note_id)
     return redirect("/", code=302)
 
+def is_localhost_env():
+    return False
+
+
+import json
+from flask_migrate import upgrade, Migrate, downgrade, merge
+
+
+@app.route("/admin/db/<migration_command>", methods=['GET'])
+def database_migration(migration_command):
+    """
+    To run migration files for upgrade and downgrade
+
+    Parameters:
+    migration_command (string): migration command as upgrade and downgrade
+
+    Returns:
+    json
+
+    """
+    allowed_commands = ["upgrade", "downgrade", "merge"]
+    if migration_command not in allowed_commands:
+        return (
+            json.dumps(
+                {"message": "{} command not allowed".format(migration_command)}
+            ),
+            400,
+        )
+    if is_localhost_env():
+        migrations_directory = os.path.join("spc-app", "migrations")
+    else:
+        migrations_directory = os.path.join("migrations")
+    migrate = Migrate(app, db, directory=migrations_directory)
+    if migration_command == "upgrade":
+        upgrade(directory=migrate.directory)
+    elif migration_command == "downgrade":
+        downgrade(directory=migrate.directory)
+    elif migration_command == "merge":
+        merge(migrate.directory, revisions="heads", message="Merge Heads")
+    return json.dumps(
+        {"message": "{} done on migrations.".format(migration_command)}
+    )
+
 
 if __name__ == "__main__":
     # db.create_all()
